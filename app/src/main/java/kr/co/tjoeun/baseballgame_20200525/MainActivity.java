@@ -1,6 +1,7 @@
 package kr.co.tjoeun.baseballgame_20200525;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.BindingMethod;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
@@ -22,6 +23,7 @@ public class MainActivity extends BaseActivity {
 //    문제로 사용될 3자리 숫자 배열
     int[] questionArr = new int[3];
 
+    int tryCount = 0;
 //    채팅 내역으로 사용할 ArrayList
     List<Message> messages = new ArrayList<>();
 
@@ -59,6 +61,8 @@ public class MainActivity extends BaseActivity {
 
 //                리스트뷰를 맨밑으로 끌어내려주자
                 binding.messageListView.smoothScrollToPosition(messages.size()-1);
+
+                tryCount++;
 
 //                몇볼인지 스트라이크인지 계산하고 답장하자자
                checkStrikeAndBalls(inputValue);
@@ -161,6 +165,22 @@ public class MainActivity extends BaseActivity {
         messageAdapter.notifyDataSetChanged();
 
         binding.messageListView.smoothScrollToPosition(messages.size()-1);
+
+//        3s라면 축하메세지 + 몇번만에 맞췄는지 + 입력 불가하도록 막아주기
+        if (strikeCount==3){
+            messages.add(new Message("정답입니다!","Cpu"));
+            messages.add(new Message(String.format("%d회만에 맞췄습니다.",tryCount),"Cpu"));
+
+            messageAdapter.notifyDataSetChanged();
+            binding.messageListView.smoothScrollToPosition(messages.size()-1);
+
+//            Edittext
+            binding.numEdt.setEnabled(false);
+            binding.sendBtn.setEnabled(false);
+
+//            종료 안내 토스트
+            Toast.makeText(mContext,"이용해주셔서 감사합니다.",Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
