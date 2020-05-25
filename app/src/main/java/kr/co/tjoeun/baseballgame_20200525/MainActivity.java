@@ -5,12 +5,14 @@ import androidx.databinding.BindingMethod;
 import androidx.databinding.DataBindingUtil;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Delayed;
 
 import kr.co.tjoeun.baseballgame_20200525.adpter.MessageAdapter;
 import kr.co.tjoeun.baseballgame_20200525.databinding.ActivityMainBinding;
@@ -159,22 +161,40 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
-//        컴퓨터 가  ?S?B인지 답장하고 밑으로 끌어내리기
-        messages.add(new Message(String.format("%dS %dB 입니다.",strikeCount,ballCount),"Cpu"));
 
-        messageAdapter.notifyDataSetChanged();
+        final int copyStrike = strikeCount;
+        final int copyBall = ballCount;
+        Handler myhandler = new Handler();
 
-        binding.messageListView.smoothScrollToPosition(messages.size()-1);
+        myhandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //        컴퓨터 가  ?S?B인지 답장하고 밑으로 끌어내리기
+                messages.add(new Message(String.format("%dS %dB 입니다.",copyStrike,copyBall),"Cpu"));
+
+                messageAdapter.notifyDataSetChanged();
+
+                binding.messageListView.smoothScrollToPosition(messages.size()-1);
+            }
+        },500);
+
 
 //        3s라면 축하메세지 + 몇번만에 맞췄는지 + 입력 불가하도록 막아주기
         if (strikeCount==3){
-            messages.add(new Message("정답입니다!","Cpu"));
-            messages.add(new Message(String.format("%d회만에 맞췄습니다.",tryCount),"Cpu"));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    messages.add(new Message("정답입니다!","Cpu"));
+                    messages.add(new Message(String.format("%d회만에 맞췄습니다.",tryCount),"Cpu"));
 
-            messageAdapter.notifyDataSetChanged();
-            binding.messageListView.smoothScrollToPosition(messages.size()-1);
+                    messageAdapter.notifyDataSetChanged();
+                    binding.messageListView.smoothScrollToPosition(messages.size()-1);
 
-//            Edittext
+                }
+            },1000);
+
+
+//            Edittext와 버튼을 더이상 사용하지 못하도록 막아주는 역할
             binding.numEdt.setEnabled(false);
             binding.sendBtn.setEnabled(false);
 
