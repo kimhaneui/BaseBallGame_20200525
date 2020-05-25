@@ -1,9 +1,11 @@
 package kr.co.tjoeun.baseballgame_20200525;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingMethod;
 import androidx.databinding.DataBindingUtil;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -194,6 +196,8 @@ public class MainActivity extends BaseActivity {
             },1000);
 
 
+
+
 //            Edittext와 버튼을 더이상 사용하지 못하도록 막아주는 역할
             binding.numEdt.setEnabled(false);
             binding.sendBtn.setEnabled(false);
@@ -203,4 +207,19 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+        alert.setTitle("종료확인");
+        alert.setMessage("정말 숫자 야구 게임을 종료하시겠습니까?");
+        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        alert.setNegativeButton("취소",null);
+        alert.show();
+    }
 }
